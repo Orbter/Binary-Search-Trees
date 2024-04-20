@@ -71,14 +71,18 @@ class Tree {
         directionNode = 'right';
       }
     }
+    // no value found
     if (current === null) return;
+    // no children
     else if (current.left === null && current.right === null) {
       if (directionNode === 'right') {
         lastNode.right = null;
       } else {
         lastNode.left = null;
       }
-    } else if (current.right !== null && current.left !== null) {
+    }
+    // two children
+    else if (current.right !== null && current.left !== null) {
       replaceNode = current;
       replaceNode = replaceNode.right;
       while (replaceNode.left !== null) {
@@ -88,7 +92,9 @@ class Tree {
       const nodeValue = replaceNode.data;
       this.deleteItem(replaceNode.data);
       current.data = nodeValue;
-    } else {
+    }
+    // one children
+    else {
       if (directionNode === 'left') {
         if (current.left === null) {
           lastNode.left = current.right;
@@ -123,10 +129,11 @@ class Tree {
   }
 }
 const array = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
+const exerciseArray = [36, 34, 32, 40, 20, 30, 50, 70, 60, 65, 80, 75, 85];
 const treeTest = new Tree(array);
 const firstNode = treeTest.root;
 treeTest.insert(323);
 treeTest.insert(325);
 
-treeTest.deleteItem(4);
+treeTest.deleteItem(5);
 treeTest.prettyPrint(firstNode);
