@@ -31,16 +31,23 @@ class Tree {
   insert(value) {
     const newNode = new Node(value);
     let current = this.root;
-    let lastNode;
     while (current.left !== null || current.right !== null) {
-      lastNode = current;
       if (current.data === newNode.data) return;
       else if (current.data > newNode.data) {
-        current = current.left;
+        if (current.left === null) {
+          current.left = newNode;
+        } else {
+          current = current.left;
+        }
       } else {
-        current = current.right;
+        if (current.right === null) {
+          current.right = newNode;
+        } else {
+          current = current.right;
+        }
       }
     }
+
     if (current.data === newNode.data) return;
     else if (current.data > newNode.data) {
       current.left = newNode;
@@ -48,6 +55,56 @@ class Tree {
       current.right = newNode;
     }
   }
+
+  deleteItem(value) {
+    let current = this.root;
+    let lastNode;
+    let replaceNode;
+    let directionNode;
+    while (current !== null && current.data !== value) {
+      lastNode = current;
+      if (current.data > value) {
+        current = current.left;
+        directionNode = 'left';
+      } else {
+        current = current.right;
+        directionNode = 'right';
+      }
+    }
+    if (current === null) return;
+    else if (current.left === null && current.right === null) {
+      if (directionNode === 'right') {
+        lastNode.right = null;
+      } else {
+        lastNode.left = null;
+      }
+    } else if (current.right !== null && current.left !== null) {
+      replaceNode = current;
+      replaceNode = replaceNode.right;
+      while (replaceNode.left !== null) {
+        lastNode = replaceNode;
+        replaceNode = replaceNode.left;
+      }
+      const nodeValue = replaceNode.data;
+      this.deleteItem(replaceNode.data);
+      current.data = nodeValue;
+    } else {
+      if (directionNode === 'left') {
+        if (current.left === null) {
+          lastNode.left = current.right;
+        } else {
+          lastNode.left = current.left;
+        }
+      } else {
+        if (current.left === null) {
+          lastNode.right = current.right;
+        } else {
+          lastNode.right = current.left;
+        }
+      }
+    }
+  }
+
   prettyPrint(node, prefix = '', isLeft = true) {
     if (node === null) {
       return;
@@ -69,4 +126,7 @@ const array = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 const treeTest = new Tree(array);
 const firstNode = treeTest.root;
 treeTest.insert(323);
+treeTest.insert(325);
+
+treeTest.deleteItem(4);
 treeTest.prettyPrint(firstNode);
