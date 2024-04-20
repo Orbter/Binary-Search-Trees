@@ -110,6 +110,41 @@ class Tree {
       }
     }
   }
+  find(value) {
+    let current = this.root;
+    while (current !== null && current.data !== value) {
+      if (current.data > value) {
+        current = current.left;
+      } else {
+        current = current.right;
+      }
+    }
+    return current;
+  }
+  levelOrder(callback) {
+    let answerArray = [];
+    let notDiscoverArray = [];
+    let current = this.root;
+    function levelOrderRecursive(node) {
+      console.log(answerArray);
+      console.log(notDiscoverArray);
+      if (callback) {
+        callback(node);
+      } else {
+        if (node !== undefined) notDiscoverArray.push(node);
+        if (notDiscoverArray.length === 0) return;
+        if (node.left !== null) notDiscoverArray.push(node.left);
+        if (node.right !== null) notDiscoverArray.push(node.right);
+      }
+      const firstNode = notDiscoverArray.shift();
+      answerArray.push(firstNode);
+      levelOrderRecursive(notDiscoverArray[0]);
+    }
+    levelOrderRecursive(current);
+    if (!callback) {
+      return answerArray;
+    }
+  }
 
   prettyPrint(node, prefix = '', isLeft = true) {
     if (node === null) {
@@ -128,12 +163,17 @@ class Tree {
     }
   }
 }
+
+function addTwo(node) {
+  node.data = node.data + 2;
+}
 const array = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 const exerciseArray = [36, 34, 32, 40, 20, 30, 50, 70, 60, 65, 80, 75, 85];
 const treeTest = new Tree(array);
 const firstNode = treeTest.root;
 treeTest.insert(323);
 treeTest.insert(325);
-
-treeTest.deleteItem(5);
+console.log(treeTest.levelOrder());
 treeTest.prettyPrint(firstNode);
+let test = [];
+console.log(test[0]);
