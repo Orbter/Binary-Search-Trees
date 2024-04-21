@@ -122,30 +122,48 @@ class Tree {
     return current;
   }
   levelOrder(callback) {
-    let answerArray = [];
-    let notDiscoverArray = [];
+    const answerArray = [];
+    const notDiscoverArray = [];
     let current = this.root;
     function levelOrderRecursive(node) {
-      console.log(answerArray);
-      console.log(notDiscoverArray);
-      if (callback) {
-        callback(node);
-      } else {
-        if (node !== undefined) notDiscoverArray.push(node);
-        if (notDiscoverArray.length === 0) return;
-        if (node.left !== null) notDiscoverArray.push(node.left);
-        if (node.right !== null) notDiscoverArray.push(node.right);
+      if (node !== undefined) {
+        if (callback) {
+          callback(node);
+        }
       }
+      if (node === undefined) return answerArray;
+      if (node.left !== null) notDiscoverArray.push(node.left);
+      if (node.right !== null) notDiscoverArray.push(node.right);
+
       const firstNode = notDiscoverArray.shift();
       answerArray.push(firstNode);
+      if (node === undefined) return answerArray;
       levelOrderRecursive(notDiscoverArray[0]);
     }
-    levelOrderRecursive(current);
+    notDiscoverArray.push(current);
+    let answer = levelOrderRecursive(current);
     if (!callback) {
       return answerArray;
+    } else {
+      return;
     }
   }
+  preOrder(callback) {
+    const answerArray = [];
+    let root = this.root;
 
+    function preOrderRecursive(current) {
+      if (current === null) return;
+      answerArray.push(current);
+      preOrderRecursive(current.left);
+      preOrderRecursive(current.right);
+    }
+
+    preOrderRecursive(root);
+    return answerArray;
+  }
+  inOrder(callback) {}
+  postOrder(callback) {}
   prettyPrint(node, prefix = '', isLeft = true) {
     if (node === null) {
       return;
@@ -173,7 +191,7 @@ const treeTest = new Tree(array);
 const firstNode = treeTest.root;
 treeTest.insert(323);
 treeTest.insert(325);
-console.log(treeTest.levelOrder());
+treeTest.levelOrder();
 treeTest.prettyPrint(firstNode);
-let test = [];
-console.log(test[0]);
+
+console.log(treeTest.preOrder());
