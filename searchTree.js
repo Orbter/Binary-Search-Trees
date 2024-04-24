@@ -136,7 +136,7 @@ class Tree {
       if (node.right !== null) notDiscoverArray.push(node.right);
 
       const firstNode = notDiscoverArray.shift();
-      answerArray.push(firstNode);
+      answerArray.push(firstNode.data);
       if (node === undefined) return answerArray;
       levelOrderRecursive(notDiscoverArray[0]);
     }
@@ -154,7 +154,10 @@ class Tree {
 
     function preOrderRecursive(current) {
       if (current === null) return;
-      answerArray.push(current);
+      if (callback) {
+        callback(current);
+      }
+      answerArray.push(current.data);
       preOrderRecursive(current.left);
       preOrderRecursive(current.right);
     }
@@ -162,8 +165,93 @@ class Tree {
     preOrderRecursive(root);
     return answerArray;
   }
-  inOrder(callback) {}
-  postOrder(callback) {}
+  inOrder(callback) {
+    const answerArray = [];
+    let root = this.root;
+    function inOrderRecursive(current) {
+      if (current === null) return;
+      inOrderRecursive(current.left);
+      if (callback) {
+        callback(current);
+      }
+      answerArray.push(current.data);
+      inOrderRecursive(current.right);
+    }
+    inOrderRecursive(root);
+    if (!callback) return answerArray;
+    else return;
+  }
+  postOrder(callback) {
+    const answerArray = [];
+    let root = this.root;
+
+    function postOrderRecursion(current) {
+      if (current === null) return;
+      postOrderRecursion(current.left);
+      postOrderRecursion(current.right);
+      if (callback) {
+        callback(current);
+      }
+      answerArray.push(current.data);
+    }
+    postOrderRecursion(root);
+    return answerArray;
+  }
+  height(node) {
+    let count = 0;
+    function heightRecursive(currentNode, count) {
+      if (currentNode === null) return count;
+      else {
+        count++;
+        return Math.max(
+          heightRecursive(currentNode.left, count),
+          heightRecursive(currentNode.right, count)
+        );
+      }
+    }
+    const num = heightRecursive(node, count);
+    return num - 1;
+  }
+
+  depth(node) {
+    let count = 0;
+    let current = this.root;
+    while (current !== null && current.data !== node.data) {
+      count++;
+      if (current.data > node.data) {
+        current = current.left;
+      } else {
+        current = current.right;
+      }
+    }
+    if (current === null) return null;
+    return count;
+  }
+  isBalanced() {
+    function isBalancedRecursively(current) {
+      if (!current) {
+        return [true, -1];
+      }
+      const [leftBalanced, leftHeight] = isBalancedRecursively(current.left);
+      const [rightBalanced, rightHeight] = isBalancedRecursively(current.right);
+
+      const heightDiff = Math.abs(leftHeight - rightHeight) <= 1;
+      const currentBalanced = leftBalanced && rightBalanced && heightDiff;
+      const currentHeight = Math.max(leftHeight, rightHeight) + 1;
+      return [currentBalanced, currentHeight];
+    }
+    const [isTreeBalanced, _] = isBalancedRecursively(this.root);
+    return isTreeBalanced;
+  }
+  rebalanced() {
+    if (this.isBalanced()) return;
+    const newArray = this.inOrder();
+    const newTree = this.buildTree(newArray);
+    console.log(newArray);
+    this.treeArray = newArray;
+    this.root = newTree;
+  }
+
   prettyPrint(node, prefix = '', isLeft = true) {
     if (node === null) {
       return;
@@ -185,13 +273,23 @@ class Tree {
 function addTwo(node) {
   node.data = node.data + 2;
 }
-const array = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
-const exerciseArray = [36, 34, 32, 40, 20, 30, 50, 70, 60, 65, 80, 75, 85];
-const treeTest = new Tree(array);
-const firstNode = treeTest.root;
-treeTest.insert(323);
-treeTest.insert(325);
-treeTest.levelOrder();
-treeTest.prettyPrint(firstNode);
-
-console.log(treeTest.preOrder());
+//  const array = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
+//  const exerciseArray = [36, 34, 32, 40, 20, 30, 50, 70, 60, 65, 80, 75, 85];
+//  const treeTest = new Tree(array);
+//  let firstNode = treeTest.root;
+//  treeTest.insert(325);
+//  treeTest.insert(326);
+//  treeTest.levelOrder();
+//  const node = treeTest.find(5);
+//  treeTest.preOrder();
+//  treeTest.levelOrder();
+//  treeTest.inOrder();
+//  treeTest.postOrder();
+//  treeTest.prettyPrint(firstNode);
+//  treeTest.height(node);
+//  treeTest.depth(node);
+//  console.log(treeTest.isBalanced());
+//  treeTest.rebalanced();
+//  console.log(treeTest.isBalanced());
+//  let secondTime = treeTest.root;
+//  treeTest.prettyPrint(secondTime);
